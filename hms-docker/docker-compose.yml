@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+  php:
+    build: './php/'
+    networks:
+      - backend
+    volumes:
+      - ../:/var/www/iso/
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+  web:
+    build: './nginx/'
+    ports:
+      - '8081:80'
+    depends_on:
+      - php
+    volumes:
+      - ../:/var/www/iso/
+    networks:
+      - frontend
+      - backend
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: test05
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - '3309:3306'
+    networks:
+      - backend
+  phpymadmin:
+    image: phpmyadmin:5.2.0
+    ports:
+      - '8082:80'
+    networks:
+      - backend
+    environment:
+      PMA_PORTS: 3306,3309
+      PMA_HOST: mysql
+
+networks:
+  frontend:
+  backend:
