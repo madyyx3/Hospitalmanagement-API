@@ -1,0 +1,248 @@
+{% extends "layout.html.twig" %}
+
+    {% block content %}
+
+		<!-- hospital filter -->
+	<div class="filter">
+		<div class="row mt-3">
+			<label for="hospitalFilter" class="col-form-label col-2">Hospitalfilter:</label>
+			<div class="col-10">
+				<select id="hospitalFilter" class="form-select m-2 col-10" onchange="filterHospital()">
+					<option value="0">Show all</option>
+					<option value="1">All patients</option>
+					<option value="2">All appointments</option>
+					<option value="3">All records</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div id="patientContainer" class="">
+        <h2 class="title-patient">Patients</h2>
+
+        <button type="button" class="add-btn" data-bs-toggle="modal" data-bs-target="#patientFormModal">Add new patient</button>
+
+        <!-- Modal patients -->
+        <div class="modal fade" id="patientFormModal" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="exampleModalLabel">Add/Edit Patient</h1>
+					    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form>
+							<input type="hidden" value="0" id="patientId">
+								<div class="mb-3">
+									<label class="col-sm-2 col-form-label" for="firstname">Firstname</label>
+									<input type="text" class="form-control" id="firstname">
+									<span id="error-firstname" class="d-none fw-bold text-danger"></span>
+								</div>
+								<div class="mb-3">
+									<label class="col-sm-2 col-form-label" for="lastname">Lastname</label>
+									<input type="text" class="form-control" id="lastname">
+									<span id="error-lastname" class="d-none fw-bold text-danger"></span>
+								</div>
+								<div class="mb-3">
+									<label class="col-sm-2 col-form-label" for="street">Street</label>
+									<input type="text" class="form-control" id="street">
+									<span id="error-street" class="d-none fw-bold text-danger"></span>
+								</div>
+                                <div class="mb-3">
+									<label class="col-sm-2 col-form-label" for="zip">Zip</label>
+									<input type="text" class="form-control" id="zip">
+									<span id="error-zip" class="d-none fw-bold text-danger"></span>
+								</div>
+                                <div class="mb-3">
+									<label class="col-sm-2 col-form-label" for="place">Place</label>
+									<input type="text" class="form-control" id="place">
+									<span id="error-place" class="d-none fw-bold text-danger"></span>
+								</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="savePatient()">Save changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<button class="btn btn-danger" onclick="loadPatients()">Show Patients</button>
+
+		<!-- patient table view -->
+		<div id="patientShow" class="d-none">
+			<table class="table table-hover align-middle mt-4" >
+				<thead>
+				<tr class="">
+					<th scope="col" class="col-1">Firstname</th>
+					<th scope="col"  class="col-1">Lastname</th>
+					<th scope="col" class="col-1">Street</th>
+					<th scope="col" class="col-1">Zip</th>
+					<th scope="col" class="col-1">Place</th>
+					<th scope="col" class="col-1">Actions</th>
+				</tr>
+				</thead>
+				<tbody id="patientTableShow"></tbody>
+			</table>
+		</div>
+	</div>
+
+        <!-- Appointment -->
+	<div id="appointmentContainer" class="">
+        <h2 class="title-patient">Appointments</h2>
+
+        <button type="button" class="add-btn" data-bs-toggle="modal" data-bs-target="#appointmentFormModal">Add new appointment</button>
+
+        <!-- Modal appointment-->
+        <div class="modal fade" id="appointmentFormModal" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="exampleModalLabel">Add/Edit Appointment</h1>
+					    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+                        <form>
+							<input type="hidden" value="0" id="appointmentId">
+                                <div class="mb-3">
+                                    <label class="col-sm-2 col-form-label" for="patient">Patient</label>
+                                    <select class="form-select" id="patient">
+                                        <option value="">Select a patient</option>
+                                        {% for patient in patients %}
+                                        	<option value="{{ patient.id }}">{{ patient.firstname }} {{ patient.lastname }}</option>
+                                        {% endfor %}
+                                    </select>
+									<span id="error-patient" class="d-none fw-bold text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="col-sm-2 col-form-label" for="start">Start</label>
+                                    <input type="datetime-local" class="form-control" id="start">
+									<span id="error-start" class="d-none fw-bold text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="col-sm-2 col-form-label" for="end">End</label>
+                                    <input type="datetime-local" class="form-control" id="end">
+									<span id="error-end" class="d-none fw-bold text-danger"></span>
+                                </div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="saveAppointment()">Save changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<button class="btn btn-danger" onclick="loadAppointments()">Show Appointments</button>
+
+		<!-- appointment filter -->
+		<div class="row mt-3">
+			<label for="patientFilter" class="col-form-label col-2">Appointmentfilter:</label>
+			<div class="col-10">
+				<select id="patientFilter" class="form-select m-2 col-10" onchange="filterAppointments()">
+					<option value="0">Show all</option>
+					{% for patient in patients %}
+						<option value="{{ patient.id }}">{{ patient.firstname }} {{patient.lastname}}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+
+		<!-- appointment table view -->
+		<div id="appointmentShow" class="d-none">
+			<table class="table table-hover align-middle mt-4" >
+				<thead>
+					<tr class="">
+					<th scope="col" class="col-1">Patient</th>
+					<th scope="col" class="col-1">Start</th>
+					<th scope="col" class="col-1">End</th>
+					<th scope="col" class="col-1">Actions</th>
+					</tr>
+				</thead>
+				<tbody id="appointmentTableShow"></tbody>
+			</table>
+		</div>
+	</div>
+	
+        <!-- Record -->
+	<div id="recordContainer" class="">
+        <h2 class="title-patient">Records</h2>
+
+        <button type="button" class="add-btn" data-bs-toggle="modal" data-bs-target="#recordFormModal">Add new record</button>
+
+        <!-- Modal record-->
+        <div class="modal fade" id="recordFormModal" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="exampleModalLabel">Add Record to patient</h1>
+					    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+                        <form>
+							<input type="hidden" value="0" id="recordId">
+								<div class="mb-3">
+									<label class="col-sm-2 col-form-label" for="recordPatient">Patient</label>
+									<select class="form-select" id="recordPatient">
+										<option value="">Select a patient</option>
+										{% for patient in patients %}
+											<option value="{{ patient.id }}">{{ patient.firstname }} {{ patient.lastname }}</option>
+										{% endfor %}
+									</select>
+									<span id="error-recordPatient" class="d-none fw-bold text-danger"></span>
+								</div>
+                                <div class="mb-3">
+									<label class="col-sm-2 col-form-label" for="description">Description</label>
+									<textarea class="form-control" id="description"></textarea>
+									<span id="error-description" class="d-none fw-bold text-danger"></span>
+								</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="saveRecord()">Save changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<button class="btn btn-danger" onclick="loadRecords()">Show Records</button>
+
+		<!-- record filter -->
+		<div class="row mt-3">
+			<label for="patientFilterTwo" class="col-form-label col-2">Recordfilter:</label>
+			<div class="col-10">
+				<select id="patientFilterTwo" class="form-select m-2 col-10" onchange="filterRecords()">
+					<option value="0">Show all</option>
+					{% for patient in patients %}
+						<option value="{{ patient.id }}">{{ patient.firstname }} {{patient.lastname}}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+
+		<!-- record table view -->
+		<div id="recordShow" class="d-none">
+			<table class="table table-hover align-middle mt-4" >
+				<thead>
+					<tr class="">
+					<th scope="col" class="col-1">Patient</th>
+					<th scope="col" class="col-2">Description</th>
+					<th scope="col" class="col-1">Created</th>
+					<th scope="col" class="col-1">Last update</th>
+					<th scope="col" class="col-1">Actions</th>
+					</tr>
+				</thead>
+				<tbody id="recordTableShow"></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="resources/js/filter.js"></script>
+    <script type="text/javascript" src="resources/js/patients.js"></script>
+	<script type="text/javascript" src="resources/js/appointments.js"></script>
+	<script type="text/javascript" src="resources/js/records.js"></script>
+
+    {% endblock %}

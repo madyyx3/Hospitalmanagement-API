@@ -1,0 +1,11 @@
+{
+    "require": {
+        "twig/twig": "^3.6",
+        "nesbot/carbon": "^2.67"
+    },
+    "autoload": {
+		"psr-4": {
+			"Hms\\": "Hms/"
+		}
+	}
+}
