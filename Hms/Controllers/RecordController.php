@@ -29,7 +29,7 @@ class RecordController extends DefaultController
         $record->setDescription($data['description']);
         $record->save();
 
-        // 2te variante, wenn insert -> return insert_id (funktion von php für db)
+        // 2te variante
         //$id = $record->save();
         //$record = Record::findById($id);
         // get last record
@@ -37,7 +37,6 @@ class RecordController extends DefaultController
         $record_last = end($records); // aber da basictablegateway 0 returnt 
 
         //$record_id = Record::findById($record->getId());
-
         echo json_encode($record_last);
     }
 
