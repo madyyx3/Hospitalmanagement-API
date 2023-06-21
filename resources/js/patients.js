@@ -75,7 +75,7 @@ function postPatient()
       showNewPatient(patient); // um den neuen Patient anzuzeigen
       showNewPatientInFilter(patient); // nachdem der neue patient angezeigt wird, wirds im filter hinzugefügt
       showNewPatientInFilterRecord(patient);
-      modalInstance.hide(); // danach loadPatients um tabelle zu refreshen ohne web refresh
+      modalInstance.hide();
     })
     .catch(error => {
         alert('Wrong input! please try again.');
