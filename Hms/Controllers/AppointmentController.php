@@ -7,7 +7,6 @@ use Carbon\Carbon;
 
 // createFromFormat('format', $data) -> wenn ich fix definiertes Format habe, wäre es besser das zu verwenden um mehr Kontrolle darüber zu haben
 // parse($data) -> wenn die Datum/Zeit Daten variieren wäre das der bessere Fall
-// hier habe ich beides getestet
 
 class AppointmentController extends DefaultController
 {
