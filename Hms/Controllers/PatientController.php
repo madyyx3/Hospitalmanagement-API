@@ -31,7 +31,10 @@ class PatientController extends DefaultController
         $patient->setPlace($data['place']);
         $patient->save();
 
-        echo json_encode($patient);
+        $patients = Patient::all();
+        $patient_last = end($patients);
+
+        echo json_encode($patient_last);
     }
 
     public function update(array $data)

@@ -72,7 +72,7 @@ abstract class BasicTableGateway
         $stmt->bind_param($types, ...array_values($data));
         $stmt->execute();
 
-        return 0;
+        return $this->conn->insert_id;
     }
 
     public function update(int $id, array $data): void

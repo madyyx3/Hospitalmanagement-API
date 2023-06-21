@@ -18,8 +18,7 @@ function loadAppointments()
 {
     fetch("/appointments")
         .then(response => response.json())
-        .then(data =>{
-            console.log(data); // ausgabe console
+        .then(data => {
             displayAppointments(data);
         });
 }
@@ -97,7 +96,7 @@ function postAppointment()
     } )
     .then(appointment => {
       showNewAppointment(appointment); // um den neuen Termin anzuzeigen
-      loadAppointments(); // danach loadAppointments um tabelle zu refreshen ohne web refresh
+      modalInstanceAppointment.hide();
     })
     .catch(error => {
         const errors = JSON.parse(error.message);
@@ -142,7 +141,7 @@ function showErrorsAppointment( errors )
     }
 }
 
-function updateAppointment( id )
+function updateAppointment( patientId )
 {
   const patient = document.querySelector("#patient").value;
   const start = document.querySelector("#start").value;
@@ -151,7 +150,7 @@ function updateAppointment( id )
   fetch("/appointments", {
       method: 'PUT',
       body: JSON.stringify({
-          id: id,
+          id: patientId,
           patient: patient,
           start: start,
           end: end
@@ -189,6 +188,8 @@ function displayFilteredAppointments(appointments)
     appointments.forEach( appointment => {
         showNewAppointment(appointment);
     });
+
+    document.querySelector("appointmentShow").className = "";
 }
 
 function displayAppointments(appointments)
@@ -214,6 +215,16 @@ async function showNewAppointment( appointment )
     displayAppointment(tr, appointment);
 
     tbody.appendChild(tr);
+}
+
+function showNewPatientInFilter(patient)
+{
+    let select = document.querySelector("#patientFilter");
+    let option = document.createElement('option');
+
+    option.value = patient.id;
+    option.textContent = patient.firstname + " " + patient.lastname;
+    select.appendChild(option);
 }
 
 function displayAppointment( tr, appointment)
@@ -264,12 +275,23 @@ function displayAppointment( tr, appointment)
 
 function updateRowAppointment( appointment )
 {
-
     const row = document.querySelector("#appointment_" + appointment.id);
     row.innerHTML = "";
 
     displayAppointment( row, appointment);
+}
 
+async function showNewAppointment( appointment )
+{
+    let tbody = await getAppointmentTableShow();
+    // let tbody = document.querySelector('#appointmentTableShow');
+
+    let tr = document.createElement("tr");
+    tr.id = "appointment_" + appointment.id;
+
+    displayAppointment(tr, appointment);
+
+    tbody.appendChild(tr);
 }
 
 function removeAppointment( id )
@@ -290,3 +312,5 @@ function fillAppointmentEditForm( appointment )
     document.querySelector('#start').value = appointment.start;
     document.querySelector('#end').value = appointment.end;
 }
+
+loadAppointments();

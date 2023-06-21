@@ -92,6 +92,7 @@ class Record implements JsonSerializable
         $gateway = new RecordGateway();
 
         if (!$this->id) {
+            $this->id =
             $gateway->insert([
                 'patient_id' => $this->patientId,
                 'description' => $this->description

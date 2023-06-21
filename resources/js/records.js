@@ -18,7 +18,6 @@ function loadRecords()
     fetch("/records")
         .then(response => response.json())
         .then(data =>{
-            console.log(data); // ausgabe
             displayRecords(data);
         });
 }
@@ -47,6 +46,16 @@ function filterRecords()
             .then(response => response.json())
             .then(data => displayFilteredRecords(data)); // nachdem leeren, wird hier appointments nach patient geladen
         });
+}
+
+function showNewPatientInFilterRecord(patient)
+{
+    let select = document.querySelector("#patientFilterTwo");
+    let option = document.createElement('option');
+
+    option.value = patient.id;
+    option.textContent = patient.firstname + " " + patient.lastname;
+    select.appendChild(option);
 }
 
 function saveRecord()
@@ -93,7 +102,7 @@ function postRecord()
     } )
     .then(record => {
       showNewRecord(record); // um den neuen Befund anzuzeigen
-      loadRecords(); // danach loadRecord um tabelle zu refreshen ohne web refresh
+      modalInstanceRecord.hide();
     })
     .catch(error => {
         const errors = JSON.parse(error.message);
@@ -127,7 +136,7 @@ function showErrorsRecord( errors )
     }
 }
 
-function updateRecord( id )
+function updateRecord( patientId )
 {
   const patient = document.querySelector("#recordPatient").value;
   const description = document.querySelector("#description").value;
@@ -135,7 +144,7 @@ function updateRecord( id )
   fetch("/records", {
       method: 'PUT',
       body: JSON.stringify({
-          id: id,
+          id: patientId,
           patient: patient,
           description: description
       }),
@@ -172,7 +181,8 @@ function displayFilteredRecords(records) {
     records.forEach(record => {
       showNewRecord(record);
     });
-  
+
+    document.querySelector("appointmentShow").className = "";
 }
 
 function displayRecords(records) {
@@ -184,18 +194,6 @@ function displayRecords(records) {
     });
   
     document.querySelector('#recordShow').className = "";
-}
-
-function showNewRecord( record )
-{
-    let tbody = document.querySelector('#recordTableShow');
-
-    let tr = document.createElement("tr");
-    tr.id = "record_" + record.id;
-
-    displayRecord(tr, record);
-
-    tbody.appendChild(tr);
 }
 
 function displayRecord( tr, record)
@@ -251,12 +249,24 @@ function displayRecord( tr, record)
 
 function updateRowRecord( record )
 {
-
     const row = document.querySelector("#record_" + record.id);
     row.innerHTML = "";
 
     displayRecord( row, record);
 
+}
+
+async function showNewRecord( record )
+{
+    let tbody = await getRecordTableShow();
+    //let tbody = document.querySelector('#recordTableShow');
+
+    let tr = document.createElement("tr");
+    tr.id = "record_" + record.id;
+
+    displayRecord(tr, record);
+
+    tbody.appendChild(tr);
 }
 
 function removeRecord( id )
@@ -271,3 +281,5 @@ function fillRecordEditForm( record )
     document.querySelector('#recordPatient').value = record.patient.id;
     document.querySelector('#description').value = record.description;
 }
+
+loadRecords();

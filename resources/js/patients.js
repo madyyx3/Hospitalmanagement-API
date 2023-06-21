@@ -73,7 +73,9 @@ function postPatient()
     } )
     .then(patient => {
       showNewPatient(patient); // um den neuen Patient anzuzeigen
-      loadPatients(); // danach loadPatients um tabelle zu refreshen ohne web refresh
+      showNewPatientInFilter(patient); // nachdem der neue patient angezeigt wird, wirds im filter hinzugefügt
+      showNewPatientInFilterRecord(patient);
+      modalInstance.hide(); // danach loadPatients um tabelle zu refreshen ohne web refresh
     })
     .catch(error => {
         alert('Wrong input! please try again.');
@@ -140,7 +142,7 @@ function showErrorsPatient( errors )
     }
 }
 
-function updatePatient( id )
+function updatePatient( patientId )
 {
   const firstname = document.querySelector("#firstname").value;
   const lastname = document.querySelector("#lastname").value;
@@ -151,7 +153,7 @@ function updatePatient( id )
   fetch("/patients", {
       method: 'PUT',
       body: JSON.stringify({
-          id: id,
+          id: patientId,
           firstname: firstname,
           lastname: lastname,
           street: street,
@@ -183,31 +185,21 @@ function deletePatient( id )
 
     })
     .then( response => response.json() )
-    .then( data => removePatient( data.id ));
+    .then( data => {
+        removePatient(data.id);
+    });
 }
 
 function displayPatients(patients)
 {
-    let tbody = document.querySelector('#patientTableShow');
-    tbody.innerHTML = "";
+   // let tbody = document.querySelector('#patientTableShow');
+   // tbody.innerHTML = "";
 
     patients.forEach( patient => {
         showNewPatient(patient);
     });
 
     document.querySelector('#patientShow').className = "";
-}
-
-function showNewPatient( patient )
-{
-    let tbody = document.querySelector('#patientTableShow');
-
-    let tr = document.createElement("tr");
-    tr.id = "patient_" + patient.id;
-
-    displayPatient(tr, patient);
-
-    tbody.appendChild(tr);
 }
 
 function displayPatient( tr, patient)
@@ -268,12 +260,27 @@ function displayPatient( tr, patient)
 
 function updateRowPatient( patient )
 {
-    //let tbody = document.querySelector('#patientShow');
+    let tbody = document.querySelector('#patientTableShow');
 
     const row = document.querySelector("#patient_" + patient.id);
     row.innerHTML = "";
 
     displayPatient( row, patient);
+
+    tbody.appendChild(row);
+
+}
+
+function showNewPatient( patient )
+{
+    let tbody = document.querySelector('#patientTableShow');
+
+    let tr = document.createElement("tr");
+    tr.id = "patient_" + patient.id;
+
+    displayPatient(tr, patient);
+
+    tbody.appendChild(tr);
 
 }
 
@@ -292,3 +299,5 @@ function fillPatientEditForm( patient )
     document.querySelector('#zip').value = patient.zip;
     document.querySelector('#place').value = patient.place;
 }
+
+loadPatients();

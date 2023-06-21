@@ -36,6 +36,8 @@ class RecordController extends DefaultController
         $records = Record::all();
         $record_last = end($records); // aber da basictablegateway 0 returnt 
 
+        //$record_id = Record::findById($record->getId());
+
         echo json_encode($record_last);
     }
 

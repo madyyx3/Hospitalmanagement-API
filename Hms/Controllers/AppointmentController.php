@@ -36,7 +36,10 @@ class AppointmentController extends DefaultController
         $appointment->setEnd(Carbon::parse($data['end']));
         $appointment->save();
 
-        echo json_encode($appointment);
+        $appointments = Appointment::all();
+        $appointment_last = end($appointments);
+
+        echo json_encode($appointment_last);
     }
 
     public function update(array $data)

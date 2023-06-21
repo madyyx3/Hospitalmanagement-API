@@ -69,7 +69,7 @@ class Patient implements JsonSerializable
         $gateway = new PatientGateway();
 
         if (!$this->id) {
-            $gateway->insert([
+            $this->id = $gateway->insert([
                 'firstname' => $this->firstname,
                 'lastname' => $this->lastname,
                 'street' => $this->street,
